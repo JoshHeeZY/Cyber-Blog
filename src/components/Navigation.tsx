@@ -8,12 +8,18 @@ export default function Navigation() {
           <Link href="/" className="text-2xl font-bold">
             Cyber Blog
           </Link>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
             <Link href="/" className="hover:text-blue-400 transition-colors">
               Home
             </Link>
             <Link href="/about" className="hover:text-blue-400 transition-colors">
               About
+            </Link>
+            <Link
+              href="/new-post"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-medium transition-colors"
+            >
+              Add
             </Link>
           </div>
         </div>
