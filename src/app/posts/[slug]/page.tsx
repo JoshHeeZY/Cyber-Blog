@@ -93,12 +93,6 @@ aireplay-ng --deauth 10 -a [AP MAC] -c [Client MAC] wlan0`}
   },
 }
 
-export async function generateStaticParams() {
-  return initialPosts.map((post) => ({
-    slug: post.slug,
-  }))
-}
-
 export default function BlogPost({ params }: PageProps) {
   const [allPosts, setAllPosts] = useState(initialPosts)
   const [savedPost, setSavedPost] = useState<any>(null)
