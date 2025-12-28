@@ -94,7 +94,7 @@ aireplay-ng --deauth 10 -a [AP MAC] -c [Client MAC] wlan0`}
 }
 
 export async function generateStaticParams() {
-  return posts.map((post) => ({
+  return initialPosts.map((post) => ({
     slug: post.slug,
   }))
 }
