@@ -1,6 +1,5 @@
 'use client'
 
-import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { posts as initialPosts } from '@/data/posts'
@@ -183,7 +182,15 @@ export default function BlogPost({ params }: PageProps) {
   }
 
   if (!post || !content) {
-    notFound()
+    return (
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Post Not Found</h1>
+        <p className="text-gray-600 mb-4">The post you're looking for doesn't exist.</p>
+        <Link href="/posts" className="text-blue-600 hover:text-blue-800 font-semibold">
+          ← Back to all posts
+        </Link>
+      </div>
+    )
   }
 
   return (
