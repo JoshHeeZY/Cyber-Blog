@@ -10,9 +10,9 @@ import InteractiveButton from '@/components/InteractiveButton'
 import ImageGallery from '@/components/ImageGallery'
 
 interface PageProps {
-  params: Promise<{
+  params: {
     slug: string
-  }>
+  }
 }
 
 // This would normally fetch from a CMS or markdown files
@@ -96,18 +96,9 @@ aireplay-ng --deauth 10 -a [AP MAC] -c [Client MAC] wlan0`}
 export default function BlogPost({ params }: PageProps) {
   const [allPosts, setAllPosts] = useState(initialPosts)
   const [savedPost, setSavedPost] = useState<any>(null)
-  const [slug, setSlug] = useState<string>('')
+  const slug = params.slug
 
   useEffect(() => {
-    // Resolve params promise
-    params.then((resolved) => {
-      setSlug(resolved.slug)
-    })
-  }, [params])
-
-  useEffect(() => {
-    if (!slug) return
-    
     // Load saved posts from localStorage
     const savedPosts = localStorage.getItem('cyber-blog-posts')
     if (savedPosts) {
@@ -125,10 +116,6 @@ export default function BlogPost({ params }: PageProps) {
       }
     }
   }, [slug])
-
-  if (!slug) {
-    return <div>Loading...</div>
-  }
 
   const post = allPosts.find((p) => p.slug === slug)
   const content = postContent[slug]
