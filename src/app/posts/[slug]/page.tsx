@@ -10,9 +10,9 @@ import InteractiveButton from '@/components/InteractiveButton'
 import ImageGallery from '@/components/ImageGallery'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 // This would normally fetch from a CMS or markdown files
@@ -96,8 +96,18 @@ aireplay-ng --deauth 10 -a [AP MAC] -c [Client MAC] wlan0`}
 export default function BlogPost({ params }: PageProps) {
   const [allPosts, setAllPosts] = useState(initialPosts)
   const [savedPost, setSavedPost] = useState<any>(null)
+  const [slug, setSlug] = useState<string>('')
 
   useEffect(() => {
+    // Resolve params promise
+    params.then((resolved) => {
+      setSlug(resolved.slug)
+    })
+  }, [params])
+
+  useEffect(() => {
+    if (!slug) return
+    
     // Load saved posts from localStorage
     const savedPosts = localStorage.getItem('cyber-blog-posts')
     if (savedPosts) {
@@ -106,7 +116,7 @@ export default function BlogPost({ params }: PageProps) {
         setAllPosts([...parsed, ...initialPosts])
         
         // Check if current post is a saved post
-        const found = parsed.find((p: any) => p.slug === params.slug)
+        const found = parsed.find((p: any) => p.slug === slug)
         if (found) {
           setSavedPost(found)
         }
@@ -114,10 +124,14 @@ export default function BlogPost({ params }: PageProps) {
         console.error('Error loading saved posts:', e)
       }
     }
-  }, [params.slug])
+  }, [slug])
 
-  const post = allPosts.find((p) => p.slug === params.slug)
-  const content = postContent[params.slug]
+  if (!slug) {
+    return <div>Loading...</div>
+  }
+
+  const post = allPosts.find((p) => p.slug === slug)
+  const content = postContent[slug]
 
   // If it's a saved post, use that data
   if (savedPost) {
