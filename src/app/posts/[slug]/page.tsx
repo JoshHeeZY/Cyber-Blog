@@ -1,6 +1,9 @@
+'use client'
+
 import { notFound } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { posts } from '@/data/posts'
+import { posts as initialPosts } from '@/data/posts'
 import Image from 'next/image'
 import CodeBlock from '@/components/CodeBlock'
 import InteractiveButton from '@/components/InteractiveButton'
@@ -97,8 +100,92 @@ export async function generateStaticParams() {
 }
 
 export default function BlogPost({ params }: PageProps) {
-  const post = posts.find((p) => p.slug === params.slug)
+  const [allPosts, setAllPosts] = useState(initialPosts)
+  const [savedPost, setSavedPost] = useState<any>(null)
+
+  useEffect(() => {
+    // Load saved posts from localStorage
+    const savedPosts = localStorage.getItem('cyber-blog-posts')
+    if (savedPosts) {
+      try {
+        const parsed = JSON.parse(savedPosts)
+        setAllPosts([...parsed, ...initialPosts])
+        
+        // Check if current post is a saved post
+        const found = parsed.find((p: any) => p.slug === params.slug)
+        if (found) {
+          setSavedPost(found)
+        }
+      } catch (e) {
+        console.error('Error loading saved posts:', e)
+      }
+    }
+  }, [params.slug])
+
+  const post = allPosts.find((p) => p.slug === params.slug)
   const content = postContent[params.slug]
+
+  // If it's a saved post, use that data
+  if (savedPost) {
+    return (
+      <article className="container mx-auto px-4 py-12 max-w-4xl">
+        <header className="mb-8">
+          <div className="mb-4">
+            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+              {savedPost.category}
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            {savedPost.title}
+          </h1>
+          <div className="flex items-center gap-4 text-gray-600 text-sm">
+            <span>{savedPost.author}</span>
+            <span>•</span>
+            <time dateTime={savedPost.date}>
+              {new Date(savedPost.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+            <span>•</span>
+            <span>{savedPost.readTime}</span>
+          </div>
+        </header>
+
+        <div className="prose prose-lg max-w-none">
+          <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+            {savedPost.screenshots && savedPost.screenshots.length > 0 && (
+              <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {savedPost.screenshots.map((screenshot: string, index: number) => (
+                  <div key={index} className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                    <Image
+                      src={screenshot}
+                      alt={`Screenshot ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+              {savedPost.content}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <Link
+            href="/posts"
+            className="text-blue-600 hover:text-blue-800 font-semibold"
+          >
+            ← Back to all posts
+          </Link>
+        </div>
+      </article>
+    )
+  }
 
   if (!post || !content) {
     notFound()

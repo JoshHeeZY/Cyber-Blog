@@ -15,13 +15,35 @@ export default function NewPost() {
   })
   const [screenshots, setScreenshots] = useState<string[]>([])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // For now, just log the data
-    // In a real app, you'd save this to a database or file system
-    console.log('New post:', formData)
-    alert('Post created! (This is a demo - in production, this would save to your database)')
-    router.push('/')
+    
+    // Create new post object
+    const newPost = {
+      slug: formData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+      title: formData.title,
+      excerpt: formData.excerpt || formData.content.substring(0, 100) + '...',
+      date: new Date().toISOString().split('T')[0],
+      category: formData.category,
+      author: formData.author,
+      readTime: `${Math.ceil(formData.content.split(' ').length / 200)} min read`,
+      content: formData.content,
+      screenshots: screenshots,
+    }
+
+    // Save to localStorage (for now - in production, use API/database)
+    try {
+      const existingPosts = localStorage.getItem('cyber-blog-posts')
+      const posts = existingPosts ? JSON.parse(existingPosts) : []
+      posts.unshift(newPost) // Add to beginning
+      localStorage.setItem('cyber-blog-posts', JSON.stringify(posts))
+      
+      alert('Post saved successfully!')
+      router.push('/posts')
+    } catch (error) {
+      console.error('Error saving post:', error)
+      alert('Error saving post. Please try again.')
+    }
   }
 
   const handleChange = (
