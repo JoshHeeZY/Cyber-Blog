@@ -3,37 +3,53 @@ import { posts } from '@/data/posts'
 
 export default function Home() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
-      {/* Hero Section */}
-      <section className="text-center mb-16">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">
+    <div className="container mx-auto px-4 py-12 max-w-4xl">
+      {/* Hero Section - Medium Style */}
+      <section className="text-center mb-16 pt-8">
+        <h1 className="text-6xl font-bold text-gray-900 mb-6 tracking-tight">
           Cyber Security Blog
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-2xl text-gray-600 max-w-2xl mx-auto font-light">
           Exploring cybersecurity, ethical hacking, penetration testing, and security research
         </p>
       </section>
 
-      {/* Blog Posts Grid */}
+      {/* Blog Posts - Medium Style */}
       <section>
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Latest Posts</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-12">
           {posts.map((post) => (
             <Link
               key={post.slug}
               href={`/posts/${post.slug}`}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow p-6 border border-gray-200"
+              className="block group"
             >
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                {post.title}
-              </h3>
-              <p className="text-gray-600 mb-4">{post.excerpt}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">{post.date}</span>
-                <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                  {post.category}
-                </span>
-              </div>
+              <article className="py-6 border-b border-gray-200 hover:border-gray-300 transition-colors">
+                <div className="flex items-start gap-4 mb-2">
+                  <span className="text-sm font-medium text-gray-900">
+                    {post.author}
+                  </span>
+                  <span className="text-gray-400">·</span>
+                  <time className="text-sm text-gray-500">
+                    {new Date(post.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+                  {post.title}
+                </h2>
+                <p className="text-xl text-gray-600 mb-4 leading-relaxed">
+                  {post.excerpt}
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    {post.category}
+                  </span>
+                  <span className="text-sm text-gray-500">{post.readTime}</span>
+                </div>
+              </article>
             </Link>
           ))}
         </div>
