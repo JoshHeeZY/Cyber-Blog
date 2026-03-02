@@ -16,6 +16,7 @@ interface BlogPost {
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     // Load saved posts from localStorage
@@ -28,18 +29,23 @@ export default function PostsPage() {
         console.error('Error loading saved posts:', e)
       }
     }
+
+    // Check admin status
+    setIsAdmin(localStorage.getItem('isAdminLoggedIn') === 'true')
   }, [])
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-bold text-gray-900">All Posts</h1>
-        <Link
-          href="/new-post"
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-medium transition-colors"
-        >
-          + Add New Post
-        </Link>
+        {isAdmin && (
+          <Link
+            href="/new-post"
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-medium transition-colors"
+          >
+            + Add New Post
+          </Link>
+        )}
       </div>
 
       <div className="space-y-8">
@@ -82,4 +88,5 @@ export default function PostsPage() {
     </div>
   )
 }
+
 
